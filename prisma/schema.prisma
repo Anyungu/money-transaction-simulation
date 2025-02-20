@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  firstName String?
+  lastName  String?
+  balance   Float    @default(1000)
+  createdAt DateTime @default(now())
+  isActive  Boolean  @default(true)
+
+  auth                 Auth?
+  transactionsSent     Transaction[] @relation("Sender")
+  transactionsReceived Transaction[] @relation("Receiver")
+}
+
+model Auth {
+  id       String @id @default(uuid())
+  userId   String @unique
+  password String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model Transaction {
+  id         String            @id @default(uuid())
+  senderId   String
+  receiverId String
+  amount     Float
+  reference  String            @unique @default(uuid())
+  status     TransactionStatus @default(PENDING)
+  createdAt  DateTime          @default(now())
+
+  sender   User @relation("Sender", fields: [senderId], references: [id])
+  receiver User @relation("Receiver", fields: [receiverId], references: [id])
+}
+
+//handle notifications separately
+model TransactionNotification {
+  id            String            @id @default(uuid())
+  userId        String
+  transactionId String
+  status        TransactionStatus
+  message       String
+  createdAt     DateTime          @default(now())
+}
