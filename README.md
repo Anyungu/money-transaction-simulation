@@ -62,6 +62,11 @@ This project is a backend system that simulates user transaction processing prov
 - **Database** is optimized with relevant indices to help in querying transaction history
 - **DB schema changes** are managed by versioned prisma migrations
 
+## BullMQ, Redis: Background processing
+- A transact request is added to a processing queue and stored in redis
+- A worker picks up the transaction and calls the processing function
+- The transaction is revalidated (for amounts) then locked in an atomic database insert all/rollback
+
 
 ## Prerequisites
 - Node.js (v22 or later)
