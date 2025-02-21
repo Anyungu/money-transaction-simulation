@@ -6,5 +6,5 @@ import {
 
 export const authRouter = express.Router();
 
-authRouter.route("/sign-up").get(userSignUpController);
-authRouter.route("/login").get(userLoginController);
+authRouter.route("/sign-up").post(userSignUpController);
+authRouter.route("/login").post(userLoginController);

@@ -47,9 +47,10 @@ model Transaction {
 
   sender   User @relation("Sender", fields: [senderId], references: [id])
   receiver User @relation("Receiver", fields: [receiverId], references: [id])
+
+  @@index([senderId, receiverId])
 }
 
-//handle notifications separately
 model TransactionNotification {
   id            String            @id @default(uuid())
   userId        String

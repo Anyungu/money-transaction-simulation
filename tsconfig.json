@@ -17,10 +17,10 @@
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "incremental": true,
-    "baseUrl": "./",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    // "baseUrl": "./",
+    // "paths": {
+    //   "@lib/*": ["src/lib/*"]
+    // }
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]

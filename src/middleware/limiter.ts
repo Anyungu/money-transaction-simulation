@@ -1,9 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
 import redisClient from "../config/redis.ts";
 import logger from "../lib/utils/logger.ts";
+import { env } from "../config/env.ts";
 
-const WINDOW_MS = 15 * 60;
-const MAX_REQUESTS = 100;
+const { LIMITER_WINDOW_MS, LIMITER_MAX_REQUESTS } = env;
 
 export const rateLimiter = async (
   req: Request,
@@ -16,10 +16,10 @@ export const rateLimiter = async (
   const currentCount = await redisClient.incr(key);
 
   if (currentCount === 1) {
-    await redisClient.expire(key, WINDOW_MS);
+    await redisClient.expire(key, LIMITER_WINDOW_MS);
   }
 
-  if (currentCount > MAX_REQUESTS) {
+  if (currentCount > LIMITER_MAX_REQUESTS) {
     logger.info({ ip }, "Too many requests");
     res.status(429).json({ message: "Too many requests, try again later." });
   }

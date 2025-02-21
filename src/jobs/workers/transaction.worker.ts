@@ -1,8 +1,8 @@
 import { Worker } from "bullmq";
 
-import { processTransaction } from "../../modules/transaction/transaction.service";
-import redisClient from "../../config/redis";
-import logger from "../../lib/utils/logger";
+import { processTransaction } from "../../modules/transaction/transaction.service.ts";
+import redisClient from "../../config/redis.ts";
+import logger from "../../lib/utils/logger.ts";
 
 const transactionWorker = new Worker(
   "transactions",

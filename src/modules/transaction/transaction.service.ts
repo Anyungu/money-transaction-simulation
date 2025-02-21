@@ -3,8 +3,13 @@ import type { CreatedTransaction } from "../../lib/types/user.types.ts";
 import BadRequestError from "../../errors/BadRequestError.ts";
 
 export const getUserBalance = async (senderId: string) => {
+  const sender = await getUserById(senderId);
+  return sender.balance;
+};
+
+export const getUserById = async (userId: string) => {
   const sender = await prisma.user.findUnique({
-    where: { id: senderId },
+    where: { id: userId },
     select: { balance: true },
   });
 
@@ -17,7 +22,7 @@ export const getUserBalance = async (senderId: string) => {
     });
   }
 
-  return sender.balance;
+  return sender;
 };
 
 export const createTransaction = async (
@@ -88,51 +93,38 @@ export const getUserTransactionHistory = async (
   pageSize: number,
   skip: number
 ) => {
-  try {
-    const transactionsQuery = prisma.$queryRaw`
+  const transactionsQuery = prisma.$queryRaw`
       SELECT *,
         CASE 
-          WHEN senderId = ${userId} THEN 'OUTGOING' 
+          WHEN "senderId" = ${userId} THEN 'OUTGOING' 
           ELSE 'INCOMING' 
         END as type
       FROM "Transaction"
-      WHERE senderId = ${userId} OR receiverId = ${userId}
+      WHERE "senderId" = ${userId} OR "receiverId" = ${userId}
       ORDER BY "createdAt" DESC
       LIMIT ${Number(pageSize)} OFFSET ${skip};
     `;
 
-    const totalFnQuery = prisma.transaction.count({
-      where: {
-        OR: [{ senderId: userId }, { receiverId: userId }],
-      },
-    });
+  const totalFnQuery = prisma.transaction.count({
+    where: {
+      OR: [{ senderId: userId }, { receiverId: userId }],
+    },
+  });
 
-    const [transactionsResponse, totalResponse] = await Promise.allSettled([
-      transactionsQuery,
-      totalFnQuery,
-    ]);
+  const [transactions, total] = await Promise.all([
+    transactionsQuery,
+    totalFnQuery,
+  ]);
 
-    if (transactionsResponse.status === "rejected") {
-    }
+  console.log(transactions);
 
-    if (totalResponse.status === "rejected") {
-    }
-
-    const transactions = (
-      transactionsResponse as PromiseFulfilledResult<typeof transactionsQuery>
-    ).value;
-    const total = (totalResponse as PromiseFulfilledResult<number>).value;
-
-    return {
-      transactions,
-      pagination: {
-        total,
-        page: Number(page),
-        pageSize: Number(pageSize),
-        totalPages: Math.ceil(total / Number(pageSize)),
-      },
-    };
-  } catch (error) {
-    console.error("Error fetching transaction history:", error);
-  }
+  return {
+    transactions,
+    pagination: {
+      total,
+      page: Number(page),
+      pageSize: Number(pageSize),
+      totalPages: Math.ceil(total / Number(pageSize)),
+    },
+  };
 };

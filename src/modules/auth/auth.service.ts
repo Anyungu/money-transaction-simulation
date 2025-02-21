@@ -21,6 +21,10 @@ export const signup = async (
       lastName,
       auth: { create: { password: hashedPassword } },
     },
+    select: {
+      id: true,
+      email: true,
+    },
   });
 
   return user;

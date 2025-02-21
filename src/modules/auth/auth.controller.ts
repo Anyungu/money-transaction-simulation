@@ -3,6 +3,7 @@ import type { UserLogin, UserSignUp } from "../../lib/types/user.types.ts";
 import { login, signup } from "./auth.service.ts";
 import { userSignUpSchema } from "../../validators/user.validators.ts";
 import BadRequestError from "../../errors/BadRequestError.ts";
+import logger from "../../lib/utils/logger.ts";
 
 export const userLoginController = async (
   req: Request<unknown, unknown, UserLogin>,
@@ -21,8 +22,10 @@ export const userLoginController = async (
     }
 
     const { email, password } = validation.data;
+    const userLoggedIn = await login(email, password);
+    logger.info({ ...userLoggedIn }, "User registered successfully");
 
-    res.status(200).json({ ...(await login(email, password)) });
+    res.status(200).json(userLoggedIn);
   } catch (error) {
     next(error);
   }
@@ -45,9 +48,12 @@ export const userSignUpController = async (
     }
 
     const { email, password, lastName, firstName } = validation.data;
-    res
-      .status(201)
-      .json({ ...(await signup(email, password, firstName, lastName)) });
+    const newUser = await signup(email, password, firstName, lastName);
+    logger.info(
+      { userId: newUser.id, userEmail: newUser.email },
+      "User registered successfully"
+    );
+    res.status(201).json(newUser);
   } catch (error) {
     next(error);
   }

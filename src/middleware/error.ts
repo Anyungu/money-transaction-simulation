@@ -11,7 +11,7 @@ export const errorHandler = (
   const requestId = req.headers["x-request-id"] || "N/A";
 
   if (err instanceof CustomError) {
-    const { statusCode, errors, logging } = err;
+    const { statusCode, errors, logging, message } = err;
 
     if (logging) {
       logger.error({
@@ -22,7 +22,11 @@ export const errorHandler = (
       });
     }
 
-    res.status(statusCode).json({ errors });
+    res.status(statusCode).json({
+      error: {
+        message: err.message,
+      },
+    });
   } else {
     logger.error({
       requestId,

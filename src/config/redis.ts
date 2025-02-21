@@ -1,7 +1,12 @@
 import Redis from "ioredis";
+import { env } from "./env.ts";
 
 const redisClientSingleton = () =>
-  new Redis(process.env.REDIS_URL || "redis://localhost:63791");
+  new Redis({
+    host: env.REDIS_HOST,
+    port: env.REDIS_PORT,
+    maxRetriesPerRequest: null,
+  });
 
 declare const globalThis: {
   redisGlobal: ReturnType<typeof redisClientSingleton>;

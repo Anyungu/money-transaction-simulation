@@ -1,10 +1,11 @@
 import type { User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-import * as jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 export const hashPassword = async (password: string) => {
-  return await bcrypt.hash(password, process.env.BYCRYPT_SALT || "silence");
+  const saltRounds = Number(process.env.BCRYPT_SALT) || 10;
+  return await bcrypt.hash(password, saltRounds);
 };
 
 export const comparePassword = async (
