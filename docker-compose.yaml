@@ -3,13 +3,24 @@ services:
   app:
     build: .
     ports:
-      - "8080:3000"
+      - "8080:8080"
     depends_on:
       - postgres
       - redis
     env_file:
-      - .env
+      - .env.docker
     restart: always
+  
+  migrate:
+    image: node:18
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: sh -c "npm install && npx prisma migrate deploy"
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/mydb
 
   worker:
     build: .
@@ -17,7 +28,7 @@ services:
     depends_on:
       - redis
     env_file:
-      - .env 
+      - .env.docker 
     restart: always
   postgres:
     image: postgres

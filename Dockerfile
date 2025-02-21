@@ -29,9 +29,9 @@ COPY --from=builder /app/package.json ./
 
 # Set environment variables
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=8080
 
-EXPOSE 3000
+EXPOSE 8080
 
 # Start the application
 CMD ["node", "dist/app.js"]
