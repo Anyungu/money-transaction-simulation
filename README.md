@@ -93,7 +93,7 @@ This project is a backend system that simulates user transaction processing prov
    ```
 4. Run database migrations:
    ```sh
-   npx prisma migrate dev
+   npx prisma migrate dev --name init
    ```
 5. Start the server:
    ```sh
