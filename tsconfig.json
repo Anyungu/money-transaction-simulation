@@ -12,11 +12,12 @@
     "resolveJsonModule": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "noEmit": true,
+    //  "noEmit": true,
+    "noEmitOnError": false,
     "types": ["node"],
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
-    "incremental": true,
+    // "incremental": true,
     // "baseUrl": "./",
     // "paths": {
     //   "@lib/*": ["src/lib/*"]

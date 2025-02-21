@@ -1,4 +1,3 @@
-import type { UserSignUp } from "../lib/types/user.types";
 import { z } from "zod";
 
 export const userSignUpSchema = z.object({
