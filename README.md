@@ -121,6 +121,12 @@ This project is a backend system that simulates user transaction processing prov
 ## Docker
 Use the docker-compose to spin up all the containers.
 
+```sh
+   docker-compose up -d
+```
+
+preview docs here: `http://localhost:8080/api/v1/docs`
+
 ## API Endpoints
 
 ### Authentication
